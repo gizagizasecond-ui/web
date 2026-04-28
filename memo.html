@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>メモアプリ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="メモ">
+</head>
+<body>
+
+  <h1>メモアプリ</h1>
+
+  <textarea id="memoInput" placeholder="メモを書く" rows="4" cols="40"></textarea>
+  <button onclick="saveMemo()">保存</button>
+
+  <ul id="memoList"></ul>
+
+  <script>
+    function saveMemo() {
+      const input = document.getElementById("memoInput");
+      const text = input.value;
+
+      if (text === "") return;
+
+      // 保存（ブラウザに）
+      let memos = JSON.parse(localStorage.getItem("memos")) || [];
+      memos.push(text);
+      localStorage.setItem("memos", JSON.stringify(memos));
+
+      input.value = "";
+      displayMemos();
+    }
+
+    function displayMemos() {
+  const list = document.getElementById("memoList");
+  list.innerHTML = "";
+
+  let memos = JSON.parse(localStorage.getItem("memos")) || [];
+
+  memos.forEach(function(memo, index) {
+    const li = document.createElement("li");
+
+    const text = document.createElement("span");
+    text.textContent = memo;
+
+    const button = document.createElement("button");
+	button.style.marginLeft = "10px";
+    button.textContent = "削除";
+    button.onclick = function() {
+      memos.splice(index, 1);
+      localStorage.setItem("memos", JSON.stringify(memos));
+      displayMemos();
+    };
+
+    li.appendChild(text);
+    li.appendChild(button);
+    list.appendChild(li);
+  });
+}
+
+    // ページ開いたとき表示
+    displayMemos();
+  </script>
+
+</body>
+</html>

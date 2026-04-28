@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Todoアプリ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+    }
+    input {
+      width: 70%;
+      padding: 8px;
+    }
+    button {
+      padding: 8px 12px;
+      margin-left: 5px;
+    }
+    li {
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    .done {
+      text-decoration: line-through;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📝 Todoアプリ</h1>
+
+  <input id="todoInput" placeholder="やること入力">
+  <button onclick="addTodo()">追加</button>
+
+  <ul id="todoList"></ul>
+
+  <script>
+    let todos = JSON.parse(localStorage.getItem("todos")) || [];
+
+    function save() {
+      localStorage.setItem("todos", JSON.stringify(todos));
+    }
+
+    function render() {
+      const list = document.getElementById("todoList");
+      list.innerHTML = "";
+
+      todos.forEach((todo, index) => {
+        const li = document.createElement("li");
+
+        const span = document.createElement("span");
+        span.textContent = todo.text;
+        if (todo.done) span.classList.add("done");
+
+        span.onclick = () => {
+          todos[index].done = !todos[index].done;
+          save();
+          render();
+        };
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "削除";
+        delBtn.onclick = () => {
+          todos.splice(index, 1);
+          save();
+          render();
+        };
+
+        li.appendChild(span);
+        li.appendChild(delBtn);
+        list.appendChild(li);
+      });
+    }
+
+    function addTodo() {
+      const input = document.getElementById("todoInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      todos.push({ text: text, done: false });
+      input.value = "";
+      save();
+      render();
+    }
+
+    render();
+  </script>
+
+</body>
+</html>
